@@ -95,9 +95,9 @@ Citizen.CreateThread(function()
 	TrainVars.TrainSpeeds.FTrain.MaxSpeed = 100
 	TrainVars.TrainSpeeds.FTrain.Accel = 0.01
 	
-	TrainVars.TrainSpeeds.Trally = {}
-	TrainVars.TrainSpeeds.Trally.MaxSpeed = 25
-	TrainVars.TrainSpeeds.Trally.Accel = 0.1
+	TrainVars.TrainSpeeds.Trolley = {}
+	TrainVars.TrainSpeeds.Trolley.MaxSpeed = 25
+	TrainVars.TrainSpeeds.Trolley.Accel = 0.1
 	
 	function findNearestTrain()
 		for _, train in ipairs(TrainList) do
@@ -128,8 +128,8 @@ Citizen.CreateThread(function()
 			ret.MaxSpeed = TrainVars.TrainSpeeds.FTrain.MaxSpeed -- Heavy, but fast.
 			ret.Accel = TrainVars.TrainSpeeds.FTrain.Accel
 		elseif (mod == 868868440) then
-			ret.MaxSpeed = TrainVars.TrainSpeeds.Trally.MaxSpeed -- Light weight, carrys people around not to fast
-			ret.Accel = TrainVars.TrainSpeeds.Trally.Accel
+			ret.MaxSpeed = TrainVars.TrainSpeeds.Trolley.MaxSpeed -- Light weight, carrys people around not to fast
+			ret.Accel = TrainVars.TrainSpeeds.Trolley.Accel
 		end
 		
 		return ret
@@ -229,7 +229,7 @@ Citizen.CreateThread(function()
 			DeleteTrains()
 			
 			Wait(60)
-			createNewTrain(24, 247.9364, -1198.597, 37.4482) -- Trally
+			createNewTrain(24, 247.9364, -1198.597, 37.4482) -- Trolley
 			createNewTrain(2, 670.2056, -685.7708, 25.15311) -- ?
 		end
 		
