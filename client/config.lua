@@ -28,7 +28,7 @@ Config.MarkerColor  = {r = 0, g = 255, b = 0}
 Config.BlipSprite   = 79
 
 Config.TrainLocations = {
-	{ ['x'] = 247.9364,  ['y'] = -1198.597,  ['z'] = 37.4482, ['trainID'] = 24, ['trainX'] = 247.9364, ['trainY'] = -1198.597, ['trainZ'] = 37.4482 }, -- Trolly
+	{ ['x'] = 247.965,  ['y'] = -1201.17,  ['z'] = 38.92, ['trainID'] = 24, ['trainX'] = 247.9364, ['trainY'] = -1198.597, ['trainZ'] = 37.4482 }, -- Trolly
 	{ ['x'] = 670.2056,  ['y'] = -685.7708,  ['z'] = 25.15311, ['trainID'] = 2, ['trainX'] = 670.2056, ['trainY'] = -685.7708, ['trainZ'] = 25.15311 }, -- FTrain
 }
 
