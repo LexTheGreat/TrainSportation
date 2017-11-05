@@ -70,8 +70,6 @@ Citizen.CreateThread(function()
 			return
 		end
 		
-		--local train = findNearestTrain()
-		
 		if (Config.EnterExitDelay == 0) then
 			Config.EnterExitDelay = GetGameTimer()
 		end
@@ -103,21 +101,28 @@ Citizen.CreateThread(function()
 		if(IsControlPressed(0,75) and(GetGameTimer() - Config.EnterExitDelay) > Config.EnterExitDelayMax) then
 			Config.EnterExitDelay = 0
 			
-			if(Config.inTrain) then
+			if(Config.inTrain or Config.inTrainAsPas) then
 				Citizen.Trace("exit")
 				if (Config.TrainVeh ~= 0) then
-					local pedPosition = GetEntityCoords(Config.localPed)
-					SetEntityCoords(Config.localPed, pedPosition.x , pedPosition.y-0.5, pedPosition.z,false,false,false,false)
+					local off = GetOffsetFromEntityInWorldCoords(Config.TrainVeh, -2.0, -5.0, 0.6)
+					SetEntityCoords(Config.localPed, off.x, off.y, off.z,false,false,false,false)
 				end
 				Config.inTrain = false
+				Config.inTrainAsPas = false
 				Config.TrainVeh = 0
 			else
 				Citizen.Trace("enter")
 				Config.TrainVeh = findNearestTrain()
 				if (Config.TrainVeh ~= 0) then
+					if (GetPedInVehicleSeat(Config.TrainVeh, 1) == 0) then -- If train has driver, then enter the back
+						SetPedIntoVehicle(Config.localPed,Config.TrainVeh,-1)
+						Config.inTrain = true
+					else
+						local off = GetOffsetFromEntityInWorldCoords(Config.TrainVeh, 0.0, -5.0, 0.6)
+						SetEntityCoords(Config.localPed, off.x, off.y, off.z)
+						Config.inTrainAsPas = true
+					end
 					Citizen.Trace("Set into Train!")
-					SetPedIntoVehicle(Config.localPed,Config.TrainVeh,-1)
-					Config.inTrain = true
 				end
 			end
 		end
@@ -130,6 +135,10 @@ Citizen.CreateThread(function()
 			local nT = findNearestTrain()
 			if nT ~= 0 then
 				DeleteMissionTrain(nT)
+				Config.inTrain = false -- F while train doesn't have driver
+				Config.inTrainAsPas = false -- F while train has driver
+				Config.TrainVeh = 0
+				Config.Speed = 0
 			end
 		end
 	end
