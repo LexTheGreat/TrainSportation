@@ -1,13 +1,14 @@
 Config = {}
 -- Current Train Config
 Config.ModelsLoaded = false
-Config.localPed = GetPlayerPed(PlayerId())
+Config.debug = true
 Config.inTrain = false -- F while train doesn't have driver
 Config.inTrainAsPas = false -- F while train has driver
 Config.TrainVeh = 0
 Config.Speed = 0
 Config.EnterExitDelay = 0
 Config.EnterExitDelayMax = 600
+Config.SetupMarkers = false
 
 -- Train Defaults
 Config.TrainSpeeds = {}
