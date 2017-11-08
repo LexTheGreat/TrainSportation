@@ -36,14 +36,14 @@ Config.TrainLocations = {
 
 -- Utils
 function getVehicleInDirection(coordFrom, coordTo)
-	local rayHandle = CastRayPointToPoint(coordFrom.x, coordFrom.y, coordFrom.z, coordTo.x, coordTo.y, coordTo.z, 10, Config.localPed, 0)
+	local rayHandle = CastRayPointToPoint(coordFrom.x, coordFrom.y, coordFrom.z, coordTo.x, coordTo.y, coordTo.z, 10, GetPlayerPed(-1), 0)
 	local a, b, c, d, vehicle = GetRaycastResult(rayHandle)
 	return vehicle
 end
 
 function findNearestTrain()
-	local localPedPos = GetEntityCoords(Config.localPed)
-	local entityWorld = GetOffsetFromEntityInWorldCoords(Config.localPed, 0.0, 120.0, 0.0)
+	local localPedPos = GetEntityCoords(GetPlayerPed(-1))
+	local entityWorld = GetOffsetFromEntityInWorldCoords(GetPlayerPed(-1), 0.0, 120.0, 0.0)
 	local veh = getVehicleInDirection(localPedPos, entityWorld)
 	
 	if veh > 0 and IsEntityAVehicle(veh) and IsThisModelATrain(GetEntityModel(veh)) then
