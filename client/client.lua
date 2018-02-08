@@ -1,3 +1,9 @@
+function HelpText(text)
+  SetTextComponentFormat("STRING")
+  AddTextComponentString(text)
+  DisplayHelpTextFromStringLabel(0, 0, 0, -1)
+end
+
 Citizen.CreateThread(function()
 	Log("Train Markers Init.")
 	while true do		
@@ -8,6 +14,7 @@ Citizen.CreateThread(function()
 				local trainLocation = Config.TrainLocations[i]
 				if(GetDistanceBetweenCoords(coords, trainLocation.x, trainLocation.y, trainLocation.z, true) < Config.DrawDistance) then
 					DrawMarker(Config.MarkerType, trainLocation.x, trainLocation.y, trainLocation.z, 0.0, 0.0, 0.0, 0, 0.0, 0.0, Config.MarkerSize.x, Config.MarkerSize.y, Config.MarkerSize.z-2.0, Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, false, false, false, false)
+					HelpText("Press ~INPUT_DETONATE~ to spawn a ~g~train")
 				end
 				if(GetDistanceBetweenCoords(coords, trainLocation.x, trainLocation.y, trainLocation.z, true) < Config.MarkerSize.x / 2) then
 					if(IsControlPressed(0,58) and(GetGameTimer() - Config.EnterExitDelay) > Config.EnterExitDelayMax) then -- G
