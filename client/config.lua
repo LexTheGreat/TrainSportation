@@ -15,7 +15,7 @@ Config.MarkerSize   = {x = 1.5, y = 1.5, z = 1.0}
 Config.MarkerColor  = {r = 0, g = 255, b = 0}
 Config.BlipSprite   = 79
 
---Debug
+--Debug, enable train spawning.
 Config.Debug = false
 
 -- Marker/Blip Locations/Spawn locations
