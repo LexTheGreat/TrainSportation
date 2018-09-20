@@ -3,3 +3,5 @@ client_scripts {
 	'client/config.lua',
 	'client/client.lua'
 }
+
+export 'createTrain'
