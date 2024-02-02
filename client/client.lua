@@ -143,7 +143,7 @@ Citizen.CreateThread(function()
 			SetBlipColour (blip, 2)
 			SetBlipAsShortRange(blip, true)
 			BeginTextCommandSetBlipName("STRING")
-			AddTextComponentString("驾驶火车")
+			AddTextComponentString("train")
 			EndTextCommandSetBlipName(blip)
 		end
 		-- Log("Done Loading Train Blips.")
@@ -160,40 +160,21 @@ Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(0)
 		if Config.inTrain then
-			-- 开关门
+			--    
+			-- door open/close
 			local doorcount = GetTrainDoorCount(Config.TrainVeh)
 			-- -- print (doorcount)
 			if IsControlJustReleased(keyboard, 82) then
 				-- -- print (Config.TrainVeh)
 				local carrige = GetTrainCarriage(Config.TrainVeh, 1)
-				
-				-- for doorindex = 0, doorcount-1 do
-					
-				-- 	-- 控制左边门，本车的1,3，下一车的2,4
-				-- 	if doorindex == 0 or doorindex == 2 then
-				-- 		local doorstate = GetTrainDoorOpenRatio(Config.TrainVeh, doorindex)
-				-- 		if doorstate == 0.0 then
-				-- 			SetTrainDoorOpenRatio(Config.TrainVeh, doorindex, 1.0)
-				-- 		else
-				-- 			SetTrainDoorOpenRatio(Config.TrainVeh, doorindex, 0.0)
-				-- 		end
-				-- 	else
-				-- 		local doorstate = GetTrainDoorOpenRatio(carrige, doorindex)
-				-- 		if doorstate == 0.0 then
-				-- 			SetTrainDoorOpenRatio(carrige, doorindex, 1.0)
-				-- 		else
-				-- 			SetTrainDoorOpenRatio(carrige, doorindex, 0.0)
-				-- 		end
-				-- 	end
 
-				-- end
-				
-				--动画，逐渐开门
+				-- smoothly open door in animation	
 				local serverid = GetPlayerServerId(PlayerId())
 				local doorstate = GetTrainDoorOpenRatio(Config.TrainVeh, 0)
 				if doorstate <=0.05 then
-					--逐渐开门
-					--让其他玩家看到开门动画
+					--    
+					--           
+					-- let other players see the door opening animation	
 					TriggerServerEvent('Train:opendoor', 1, NetworkGetNetworkIdFromEntity(Config.TrainVeh), NetworkGetNetworkIdFromEntity(carrige), serverid)
 					while doorstate <= 1.0 do
 						SetTrainDoorOpenRatio(Config.TrainVeh, 0, doorstate)
@@ -204,8 +185,8 @@ Citizen.CreateThread(function()
 						Citizen.Wait(2)
 					end
 				else
-					--逐渐关门
-					--让其他玩家看到关门动画
+					--    
+					--           
 					TriggerServerEvent('Train:closeDoor', 1, NetworkGetNetworkIdFromEntity(Config.TrainVeh), NetworkGetNetworkIdFromEntity(carrige), serverid)
 					while doorstate >= 0.0 do
 						SetTrainDoorOpenRatio(Config.TrainVeh, 0, doorstate)
@@ -219,35 +200,14 @@ Citizen.CreateThread(function()
 
 			elseif IsControlJustReleased(keyboard, 81) then
 				local carrige = GetTrainCarriage(Config.TrainVeh, 1)
-				-- for doorindex = 0, doorcount-1 do
-					
-				-- 	-- 控制右边门，本车的2,4，下一车的1,3
-					
-				-- 	if doorindex == 1 or doorindex == 3 then
-				-- 		local doorstate = GetTrainDoorOpenRatio(Config.TrainVeh, doorindex)
-				-- 		if doorstate == 0.0 then
-				-- 			SetTrainDoorOpenRatio(Config.TrainVeh, doorindex, 1.0)
-				-- 		else
-				-- 			SetTrainDoorOpenRatio(Config.TrainVeh, doorindex, 0.0)
-				-- 		end
-				-- 	else
-				-- 		local doorstate = GetTrainDoorOpenRatio(carrige, doorindex)
-				-- 		if doorstate == 0.0 then
-				-- 			SetTrainDoorOpenRatio(carrige, doorindex, 1.0)
-				-- 		else
-				-- 			SetTrainDoorOpenRatio(carrige, doorindex, 0.0)
-				-- 		end
-				-- 	end	
-				-- end
 
-				--动画，逐渐开门
 				local doorstate = GetTrainDoorOpenRatio(Config.TrainVeh, 1)
 				local serverid = GetPlayerServerId(PlayerId())
 				if doorstate <=0.05 then
 					-- print (Config.TrainVeh .. " " .. carrige)
 					-- print (NetworkGetNetworkIdFromEntity(Config.TrainVeh) .. " " .. NetworkGetNetworkIdFromEntity(carrige))
-					--逐渐开门
-					--让其他玩家看到开门动画	
+					--    
+					--           	
 					TriggerServerEvent('Train:opendoor', 0, NetworkGetNetworkIdFromEntity(Config.TrainVeh), NetworkGetNetworkIdFromEntity(carrige), serverid)
 					while doorstate <= 1.0 do
 						
@@ -263,8 +223,8 @@ Citizen.CreateThread(function()
 					SetVehicleDoorOpen(carrige, 0, false, false)
 					SetVehicleDoorOpen(carrige, 2, false, false)
 				else
-					--逐渐关门
-					--让其他玩家看到关门动画
+					--    
+					--           
 					TriggerServerEvent('Train:closeDoor', 0, NetworkGetNetworkIdFromEntity(Config.TrainVeh), NetworkGetNetworkIdFromEntity(carrige), serverid)
 					while doorstate >= 0.0 do
 						SetTrainDoorOpenRatio(Config.TrainVeh, 1, doorstate)
@@ -291,7 +251,8 @@ AddEventHandler('Train:opendoor', function(direction,trainnetworkid,carrigenetwo
 	if not NetworkDoesEntityExistWithNetworkId(trainnetworkid) or not NetworkDoesEntityExistWithNetworkId(carrigenetworkid) then
 		return
 	end
-	-- 如果是自己，返回
+	--      ，  
+	-- if self, return
 	if serverid == GetPlayerServerId(PlayerId()) then
 		return
 	end
@@ -300,7 +261,8 @@ AddEventHandler('Train:opendoor', function(direction,trainnetworkid,carrigenetwo
 	local carrige = NetworkGetEntityFromNetworkId(carrigenetworkid)
 	-- print (type(direction))
 	-- print (train ..DoesEntityExist(train) ..  " " .. carrige .. DoesEntityExist(carrige))
-	-- direction true左边，false右边
+	-- direction true  ，false  
+	-- direction true left, false right
 	local doorstate = 0.0
 	if direction == 1 then
 		-- print ("open left")
@@ -336,7 +298,7 @@ AddEventHandler('Train:closeDoor', function(direction,trainnetworkid,carrigenetw
 	-- print (type(direction))
 	local train = NetworkGetEntityFromNetworkId(trainnetworkid)
 	local carrige = NetworkGetEntityFromNetworkId(carrigenetworkid)
-	-- direction true左边，false右边
+	-- direction true  ，false  
 	local doorstate = 1.0
 	-- print (train .. DoesEntityExist(train) .. " " .. carrige .. DoesEntityExist(carrige))
 	if direction == 1 then
