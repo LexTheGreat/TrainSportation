@@ -20,17 +20,16 @@ Config.Debug = false
 
 -- Marker/Blip Locations/Spawn locations
 Config.TrainLocations = {
-	{ ['x'] = 247.965,  ['y'] = -1201.17,  ['z'] = 38.92, ['trainID'] = 24, ['trainX'] = 247.9364, ['trainY'] = -1198.597, ['trainZ'] = 37.4482 }, -- Trolley
-	{ ['x'] = 670.2056,  ['y'] = -685.7708,  ['z'] = 25.15311, ['trainID'] = 23, ['trainX'] = 670.2056, ['trainY'] = -685.7708, ['trainZ'] = 25.15311 }, -- FTrain
+	{ ['x'] = 247.965,  ['y'] = -1201.17,  ['z'] = 38.92, ['trainID'] = 27, ['trainX'] = 247.9364, ['trainY'] = -1198.597, ['trainZ'] = 37.4482 }, -- Trolley
+	{ ['x'] = 670.2056,  ['y'] = -685.7708,  ['z'] = 25.15311, ['trainID'] = 17, ['trainX'] = 670.2056, ['trainY'] = -685.7708, ['trainZ'] = 25.15311 }, -- FTrain
 }
 
 -- Train speeds (https://en.wikipedia.org/wiki/Rail_speed_limits_in_the_United_States)
 Config.TrainSpeeds = {
-	[1030400667] = { ["MaxSpeed"] = 36, ["Accel"] = 0.05, ["Dccel"] = 0.1, ["Pass"] = false }, -- F Trains
-	[868868440] = { ["MaxSpeed"] = 91, ["Accel"] = 0.1, ["Dccel"] = 0.1, ["Pass"] = true }, -- T Trains
+	[1030400667] = { ["MaxSpeed"] = 75, ["Accel"] = 0.01, ["Dccel"] = 0.02, ["Pass"] = false }, -- F Trains
+	[868868440] = { ["MaxSpeed"] = 40, ["Accel"] = 0.05, ["Dccel"] = 0.07, ["Pass"] = false}, -- 地铁
 }
-
--- Utils
+ -- Utils
 function getVehicleInDirection(coordFrom, coordTo)
 	local rayHandle = CastRayPointToPoint(coordFrom.x, coordFrom.y, coordFrom.z, coordTo.x, coordTo.y, coordTo.z, 10, GetPlayerPed(-1), 0)
 	local a, b, c, d, vehicle = GetRaycastResult(rayHandle)
@@ -58,6 +57,7 @@ end
 
 function getTrainSpeeds(veh)
 	local model = GetEntityModel(veh)
+	-- print("Model: " .. model)
 	local ret = {}
 	ret.MaxSpeed = 0
 	ret.Accel = 0
@@ -84,10 +84,12 @@ function getCanPassenger(veh)
 end
 
 function createTrain(type,x,y,z)
-	local train = CreateMissionTrain(type,x,y,z,true)
+	local train = CreateMissionTrain(type,x,y,z,true,false)
 	SetTrainSpeed(train,0)
 	SetTrainCruiseSpeed(train,0)
 	SetEntityAsMissionEntity(train, true, false)
+	-- NetworkRegisterEntityAsNetworked(train)	
+	NetworkRegisterEntityAsNetworked(GetTrainCarriage( train, 1 ))
 	debugLog("createTrain.")
 end
 
