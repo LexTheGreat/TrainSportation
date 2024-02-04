@@ -1,6 +1,6 @@
 if (Config.Debug) then
 	Citizen.CreateThread(function()
-		Log("Train Markers Init.")
+		DebugLog("Train Markers Init.")
 		while true do		
 			Wait(0)
 			if Config.ModelsLoaded then	
@@ -11,10 +11,10 @@ if (Config.Debug) then
 						DrawMarker(Config.MarkerType, trainLocation.x, trainLocation.y, trainLocation.z, 0.0, 0.0, 0.0, 0, 0.0, 0.0, Config.MarkerSize.x, Config.MarkerSize.y, Config.MarkerSize.z-2.0, Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, false, false, false, false)
 					end
 					if(GetDistanceBetweenCoords(coords, trainLocation.x, trainLocation.y, trainLocation.z, true) < Config.MarkerSize.x / 2) then
-						if(IsControlPressed(0,58) and(GetGameTimer() - Config.EnterExitDelay) > Config.EnterExitDelayMax) then -- G
+						if(IsControlPressed(0,Config.KeyBind.Debug.SpawnTrain) and(GetGameTimer() - Config.EnterExitDelay) > Config.EnterExitDelayMax) then -- G
 							Config.EnterExitDelay = 0
 							Wait(60)
-							createTrain(trainLocation.trainID, trainLocation.trainX, trainLocation.trainY, trainLocation.trainZ)
+							CreateTrain(trainLocation.trainID, trainLocation.trainX, trainLocation.trainY, trainLocation.trainZ)
 						end
 					end
 				end
@@ -23,45 +23,48 @@ if (Config.Debug) then
 	end)
 end
 
-function doTrains()
+function DoTrains()
 	if Config.ModelsLoaded then
 		if (Config.EnterExitDelay == 0) then
 			Config.EnterExitDelay = GetGameTimer()
 		end
 		if (Config.inTrain) then
 			-- Speed Up/Forwards (W)
-			if (IsControlPressed(0,71) and IsControlPressed(0,72) and Config.Debug and Config.Speed ~= 0) then -- D(E)bug Break (W+S)
-				debugLog("break:" .. GetEntityCoords(Config.TrainVeh))
+			if (IsControlPressed(0,Config.KeyBind.SpeedUp) and IsControlPressed(0,Config.KeyBind.SpeedDown) and Config.Debug and Config.Speed ~= 0) then -- D(E)bug Break (W+S)
+				DebugLog("break:" .. GetEntityCoords(Config.TrainVeh))
 				Config.Speed = 0
 				SetTrainSpeed(Config.TrainVeh, 0)
-			elseif (IsControlPressed(0,73)) then -- E Break (X)
+			elseif (IsControlPressed(0,Config.KeyBind.EBreak)) then -- E Break (X)
 				Config.Speed = 0
-			elseif (IsControlPressed(0,71) and Config.Speed < getTrainSpeeds(Config.TrainVeh).MaxSpeed) then  -- Forward (W)
-				debugLog("W: " .. Config.Speed)
-				Config.Speed = Config.Speed + getTrainSpeeds(Config.TrainVeh).Accel
-			elseif (IsControlPressed(0,72) and Config.Speed  > -getTrainSpeeds(Config.TrainVeh).MaxSpeed)then -- Backwards (S)
-				debugLog("S: " .. Config.Speed)
-				Config.Speed = Config.Speed - getTrainSpeeds(Config.TrainVeh).Dccel
+			elseif (IsControlPressed(0,Config.KeyBind.SpeedUp) and Config.Speed < GetTrainSpeeds(Config.TrainVeh).MaxSpeed) then  -- Forward (W)
+				DebugLog("W: " .. Config.Speed)
+				Config.Speed = Config.Speed + GetTrainSpeeds(Config.TrainVeh).Accel
+			elseif (IsControlPressed(0,Config.KeyBind.SpeedDown) and Config.Speed  > -GetTrainSpeeds(Config.TrainVeh).MaxSpeed)then -- Backwards (S)
+				DebugLog("S: " .. Config.Speed)
+				Config.Speed = Config.Speed - GetTrainSpeeds(Config.TrainVeh).Dccel
 			end
 			
 			SetTrainCruiseSpeed(Config.TrainVeh,Config.Speed)
 		elseif IsPedInAnyTrain(GetPlayerPed(-1)) then -- Should fix not being able to drive trains after restart resource.
-			debugLog("I'm in a train? Did the resource restart...")
+			-- DebugLog("I'm in a train? Did the resource restart...")
 			if GetVehiclePedIsIn(GetPlayerPed(-1), false) == 0 then
-				debugLog("Unable to get train, re-enter the train, or wait!")
+				-- DebugLog("Unable to get train, re-enter the train, or wait!")
+
+				-- IsPedInAnyTrain(GetPlayerPed(-1)) can be true while GetVehiclePedIsIn(GetPlayerPed(-1), false) is false.
+				-- This is a new thing with being inside a train, while not driving it. Disabling the Logs for this as it shouldn't be a issue.
 			else
-				debugLog("T:" .. GetVehiclePedIsIn(GetPlayerPed(-1), false) .. "|M:" .. GetEntityModel(GetVehiclePedIsIn(GetPlayerPed(-1), false)))
+				DebugLog("T:" .. GetVehiclePedIsIn(GetPlayerPed(-1), false) .. "|M:" .. GetEntityModel(GetVehiclePedIsIn(GetPlayerPed(-1), false)))
 				Config.TrainVeh = GetVehiclePedIsIn(GetPlayerPed(-1), false)
 				Config.inTrain = true
 			end
 		end
 
 		-- Enter/Exit (F)
-		if(IsControlPressed(0,75) and(GetGameTimer() - Config.EnterExitDelay) > Config.EnterExitDelayMax) then
+		if(IsControlPressed(0,Config.KeyBind.EnterExit) and(GetGameTimer() - Config.EnterExitDelay) > Config.EnterExitDelayMax) then
 			Config.EnterExitDelay = 0
 			
 			if(Config.inTrain or Config.inTrainAsPas) then
-				debugLog("exit")
+				DebugLog("exit")
 				if (Config.TrainVeh ~= 0) then
 					local off = GetOffsetFromEntityInWorldCoords(Config.TrainVeh, -2.0, -5.0, 0.6)
 					SetEntityCoords(GetPlayerPed(-1), off.x, off.y, off.z,false,false,false,false)
@@ -70,28 +73,28 @@ function doTrains()
 				Config.inTrainAsPas = false
 				Config.TrainVeh = 0
 			else
-				Config.TrainVeh = findNearestTrain()
+				Config.TrainVeh = FindNearestTrain()
 				if (Config.TrainVeh ~= 0) then
 					if (GetPedInVehicleSeat(Config.TrainVeh, 1) == 0) then -- If train has driver, then enter the back
 						SetPedIntoVehicle(GetPlayerPed(-1),Config.TrainVeh,-1)
 						Config.inTrain = true
-						debugLog("Set into Train!")
-						debugLog("T:" .. GetVehiclePedIsIn( ped, false ) .. "|M:" .. GetEntityModel(GetVehiclePedIsIn( ped, false )))
-					elseif getCanPassenger(Config.TrainVeh) then
+						DebugLog("Set into Train!")
+						DebugLog("T:" .. GetVehiclePedIsIn( ped, false ) .. "|M:" .. GetEntityModel(GetVehiclePedIsIn( ped, false )))
+					elseif GetCanPassenger(Config.TrainVeh) then
 						local off = GetOffsetFromEntityInWorldCoords(Config.TrainVeh, 0.0, -5.0, 0.6)
 						SetEntityCoords(GetPlayerPed(-1), off.x, off.y, off.z)
 						Config.inTrainAsPas = true
-						debugLog("Set into Train as Passenger!")
-						debugLog("T:" .. GetVehiclePedIsIn( ped, false ) .. "|M:" .. GetEntityModel(GetVehiclePedIsIn( ped, false )))
+						DebugLog("Set into Train as Passenger!")
+						DebugLog("T:" .. GetVehiclePedIsIn( ped, false ) .. "|M:" .. GetEntityModel(GetVehiclePedIsIn( ped, false )))
 					end
 				end
 			end
 		end
 		
 		-- KP8 to delete train infront
-		if(IsControlPressed(0,111) and(GetGameTimer() - Config.EnterExitDelay) > Config.EnterExitDelayMax) then
+		if((IsControlPressed(0,Config.KeyBind.Debug.DeleteTrain) and(GetGameTimer() - Config.EnterExitDelay) > Config.EnterExitDelayMax) and Config.Debug) then
 			Config.EnterExitDelay = 0
-			local nT = findNearestTrain()
+			local nT = FindNearestTrain()
 			if nT ~= 0 then
 				DeleteMissionTrain(nT)
 				Config.inTrain = false -- F while train doesn't have driver
@@ -133,7 +136,7 @@ Citizen.CreateThread(function()
 	LoadTrainModels()
 	
 	if (Config.Debug) then
-		Log("Loading Train Blips.")
+		DebugLog("Loading Train Blips.")
 		for i=1, #Config.TrainLocations, 1 do
 			local blip = AddBlipForCoord(Config.TrainLocations[i].x, Config.TrainLocations[i].y, Config.TrainLocations[i].z)      
 			SetBlipSprite (blip, Config.BlipSprite)
@@ -145,12 +148,12 @@ Citizen.CreateThread(function()
 			AddTextComponentString("train")
 			EndTextCommandSetBlipName(blip)
 		end
-		Log("Done Loading Train Blips.")
+		DebugLog("Done Loading Train Blips.")
 	end
 	
 	while true do
 		Wait(0)
-		doTrains()
+		DoTrains()
 	end
 end)
 
@@ -163,7 +166,7 @@ Citizen.CreateThread(function()
 			-- door open/close
 			local doorcount = GetTrainDoorCount(Config.TrainVeh)
 			-- -- print (doorcount)
-			if IsControlJustReleased(keyboard, 82) then
+			if IsControlJustReleased(keyboard, Config.KeyBind.LeftDoor) then
 				-- -- print (Config.TrainVeh)
 				local carrige = GetTrainCarriage(Config.TrainVeh, 1)
 
@@ -197,7 +200,7 @@ Citizen.CreateThread(function()
 					end
 				end
 
-			elseif IsControlJustReleased(keyboard, 81) then
+			elseif IsControlJustReleased(keyboard, Config.KeyBind.RightDoor) then
 				local carrige = GetTrainCarriage(Config.TrainVeh, 1)
 
 				local doorstate = GetTrainDoorOpenRatio(Config.TrainVeh, 1)

@@ -15,8 +15,22 @@ Config.MarkerSize   = {x = 1.5, y = 1.5, z = 1.0}
 Config.MarkerColor  = {r = 0, g = 255, b = 0}
 Config.BlipSprite   = 79
 
---Debug, enable train spawning.
-Config.Debug = false
+-- Debug, enable train spawning. FALSE THIS TO SPAWN YOUR OWN TRAINS
+Config.Debug = true
+Config.DebugLog = true -- If Debug is true, allow debug logs.
+
+Config.KeyBind = {
+	SpeedUp = 71, -- W
+	SpeedDown = 72, -- S
+	EBreak = 73, -- X
+	EnterExit = 75, -- F
+	LeftDoor = 82, -- ,
+	RightDoor = 81 -- .
+}
+Config.KeyBind.Debug = { -- Only work when Config.Debug is true
+	SpawnTrain = 58, -- G
+	DeleteTrain = 111 -- Numpad 8
+}
 
 -- Marker/Blip Locations/Spawn locations
 Config.TrainLocations = {
@@ -30,20 +44,20 @@ Config.TrainSpeeds = {
 	[868868440] = { ["MaxSpeed"] = 40, ["Accel"] = 0.05, ["Dccel"] = 0.07, ["Pass"] = false}, -- metro
 }
  -- Utils
-function getVehicleInDirection(coordFrom, coordTo)
+function GetVehicleInDirection(coordFrom, coordTo)
 	local rayHandle = CastRayPointToPoint(coordFrom.x, coordFrom.y, coordFrom.z, coordTo.x, coordTo.y, coordTo.z, 10, GetPlayerPed(-1), 0)
 	local a, b, c, d, vehicle = GetRaycastResult(rayHandle)
 	return vehicle
 end
 
-function findNearestTrain()
+function FindNearestTrain()
 	local localPedPos = GetEntityCoords(GetPlayerPed(-1))
 	local entityWorld = GetOffsetFromEntityInWorldCoords(GetPlayerPed(-1), 0.0, 120.0, 0.0)
-	local veh = getVehicleInDirection(localPedPos, entityWorld)
+	local veh = GetVehicleInDirection(localPedPos, entityWorld)
 	
 	if veh > 0 and IsEntityAVehicle(veh) and IsThisModelATrain(GetEntityModel(veh)) then
 		if Config.Debug then 
-			debugLog("Checking ".. GetEntityModel(veh))
+			DebugLog("Checking ".. GetEntityModel(veh))
 			DrawLine(localPedPos, entityWorld, 0,255,0,255)
 		end
 		return veh
@@ -55,7 +69,7 @@ function findNearestTrain()
 	end
 end
 
-function getTrainSpeeds(veh)
+function GetTrainSpeeds(veh)
 	local model = GetEntityModel(veh)
 	-- print("Model: " .. model)
 	local ret = {}
@@ -72,7 +86,7 @@ function getTrainSpeeds(veh)
 	return ret
 end
 
-function getCanPassenger(veh)
+function GetCanPassenger(veh)
 	local model = GetEntityModel(veh)
 	local ret = false
 	
@@ -83,22 +97,22 @@ function getCanPassenger(veh)
 	return ret
 end
 
-function createTrain(type,x,y,z)
+function CreateTrain(type,x,y,z)
 	local train = CreateMissionTrain(type,x,y,z,true,false)
 	SetTrainSpeed(train,0)
 	SetTrainCruiseSpeed(train,0)
 	SetEntityAsMissionEntity(train, true, false)
 	-- NetworkRegisterEntityAsNetworked(train)	
 	NetworkRegisterEntityAsNetworked(GetTrainCarriage( train, 1 ))
-	debugLog("createTrain.")
+	DebugLog("CreateTrain.")
 end
 
-function debugLog(msg)
-	if Config.Debug then
-		Citizen.Trace("[TrainSportation:Debug]: " .. msg)
+function DebugLog(msg)
+	if Config.Debug and DebugLog then
+		Citizen.Trace("[TrainSportation:Debug]: " .. msg .. "\n")
 	end
 end
 
 function Log(msg)
-	Citizen.Trace("[TrainSportation]: " .. msg)
+	Citizen.Trace("[TrainSportation]: " .. msg .. "\n")
 end

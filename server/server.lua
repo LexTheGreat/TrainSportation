@@ -1,9 +1,9 @@
-print('TrainSportation:Server')
+DebugLog('TrainSportation:Server')
 RegisterNetEvent('Train:opendoor')
 AddEventHandler('Train:opendoor', function(direction,train,carrige, serverid )
     
     -- direction true left side, false right side
-    print(train.. 'Train:opendoor' .. carrige)
+    DebugLog(train.. 'Train:opendoor' .. carrige)
     if direction then
         --                  
         -- trigger all player clients
@@ -15,7 +15,7 @@ end)
 
 RegisterNetEvent('Train:closeDoor')
 AddEventHandler('Train:closeDoor', function(direction,train,carrige, serverid )
-    print ('Train:closeDoor')
+    DebugLog ('Train:closeDoor')
    
     if direction then
         --                  
