@@ -1,4 +1,4 @@
-if (true) then
+if (Config.Debug) then
 	Citizen.CreateThread(function()
 		Log("Train Markers Init.")
 		while true do		
@@ -128,13 +128,12 @@ Citizen.CreateThread(function()
 		RequestModelSync("metrotrain")
 		RequestModelSync("s_m_m_lsmetro_01")
 		Log("Done Loading Train Models.")
-		-- print ("Done Loading Train Models.")
 		Config.ModelsLoaded = true
 	end
 	LoadTrainModels()
 	
-	if (true) then
-		-- Log("Loading Train Blips.")
+	if (Config.Debug) then
+		Log("Loading Train Blips.")
 		for i=1, #Config.TrainLocations, 1 do
 			local blip = AddBlipForCoord(Config.TrainLocations[i].x, Config.TrainLocations[i].y, Config.TrainLocations[i].z)      
 			SetBlipSprite (blip, Config.BlipSprite)
@@ -146,7 +145,7 @@ Citizen.CreateThread(function()
 			AddTextComponentString("train")
 			EndTextCommandSetBlipName(blip)
 		end
-		-- Log("Done Loading Train Blips.")
+		Log("Done Loading Train Blips.")
 	end
 	
 	while true do
