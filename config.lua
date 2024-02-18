@@ -15,9 +15,9 @@ Config.MarkerSize   = {x = 1.5, y = 1.5, z = 1.0}
 Config.MarkerColor  = {r = 0, g = 255, b = 0}
 Config.BlipSprite   = 79
 
--- Debug, enable train spawning. FALSE THIS TO SPAWN YOUR OWN TRAINS
-Config.Debug = true
-Config.DebugLog = true -- If Debug is true, allow debug logs.
+Config.Debug = true -- While true, will enable built-in train spawning, FALSE THIS TO SPAWN YOUR OWN TRAINS
+Config.DebugLog = true -- Set to false to disable console logs
+Config.DebugDraw = false -- Set to ture to draw distance lines for testing
 
 Config.KeyBind = {
 	SpeedUp = 71, -- W
@@ -56,13 +56,13 @@ function FindNearestTrain()
 	local veh = GetVehicleInDirection(localPedPos, entityWorld)
 	
 	if veh > 0 and IsEntityAVehicle(veh) and IsThisModelATrain(GetEntityModel(veh)) then
-		if Config.Debug then 
-			DebugLog("Checking ".. GetEntityModel(veh))
+		DebugLog("Checking ".. GetEntityModel(veh))
+		if Config.DebugDraw then 
 			DrawLine(localPedPos, entityWorld, 0,255,0,255)
 		end
 		return veh
 	else
-		if Config.Debug then 
+		if Config.DebugDraw then 
 			DrawLine(localPedPos, entityWorld, 255,0,0,255)
 		end
 		return 0
@@ -108,7 +108,7 @@ function CreateTrain(type,x,y,z)
 end
 
 function DebugLog(msg)
-	if Config.Debug and DebugLog then
+	if Config.DebugLog then
 		Citizen.Trace("[TrainSportation:Debug]: " .. msg .. "\n")
 	end
 end

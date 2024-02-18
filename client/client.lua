@@ -29,7 +29,6 @@ function DoTrains()
 			Config.EnterExitDelay = GetGameTimer()
 		end
 		if (Config.inTrain) then
-			-- Speed Up/Forwards (W)
 			if (IsControlPressed(0,Config.KeyBind.SpeedUp) and IsControlPressed(0,Config.KeyBind.SpeedDown) and Config.Debug and Config.Speed ~= 0) then -- D(E)bug Break (W+S)
 				DebugLog("break:" .. GetEntityCoords(Config.TrainVeh))
 				Config.Speed = 0
