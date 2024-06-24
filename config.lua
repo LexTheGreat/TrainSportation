@@ -10,7 +10,6 @@ Config.EnterExitDelayMax = 600
 --Marker and Locations
 Config.MarkerType   = 1
 Config.DrawDistance = 100.0
-Config.MarkerType   = 1
 Config.MarkerSize   = {x = 1.5, y = 1.5, z = 1.0}
 Config.MarkerColor  = {r = 0, g = 255, b = 0}
 Config.BlipSprite   = 79
