@@ -8,8 +8,8 @@ Config.Speed = 0
 Config.EnterExitDelay = 0
 Config.EnterExitDelayMax = 600
 --Marker and Locations
-Config.MarkerType   = 1
 Config.DrawDistance = 100.0
+Config.MarkerType   = 1
 Config.MarkerSize   = {x = 1.5, y = 1.5, z = 1.0}
 Config.MarkerColor  = {r = 0, g = 255, b = 0}
 Config.BlipSprite   = 79
@@ -44,14 +44,14 @@ Config.TrainSpeeds = {
 }
  -- Utils
 function GetVehicleInDirection(coordFrom, coordTo)
-	local rayHandle = CastRayPointToPoint(coordFrom.x, coordFrom.y, coordFrom.z, coordTo.x, coordTo.y, coordTo.z, 10, GetPlayerPed(-1), 0)
+	local rayHandle = CastRayPointToPoint(coordFrom.x, coordFrom.y, coordFrom.z, coordTo.x, coordTo.y, coordTo.z, 10, PlayerPedId(), 0)
 	local a, b, c, d, vehicle = GetRaycastResult(rayHandle)
 	return vehicle
 end
 
 function FindNearestTrain()
-	local localPedPos = GetEntityCoords(GetPlayerPed(-1))
-	local entityWorld = GetOffsetFromEntityInWorldCoords(GetPlayerPed(-1), 0.0, 120.0, 0.0)
+	local localPedPos = GetEntityCoords(PlayerPedId())
+	local entityWorld = GetOffsetFromEntityInWorldCoords(PlayerPedId(), 0.0, 120.0, 0.0)
 	local veh = GetVehicleInDirection(localPedPos, entityWorld)
 	
 	if veh > 0 and IsEntityAVehicle(veh) and IsThisModelATrain(GetEntityModel(veh)) then
