@@ -5,7 +5,7 @@ if (Config.Debug) then
 			Wait(0)
 			if Config.ModelsLoaded then	
 				for i=1, #Config.TrainLocations, 1 do
-					local coords = GetEntityCoords(GetPlayerPed(-1))
+					local coords = GetEntityCoords(PlayerPedId())
 					local trainLocation = Config.TrainLocations[i]
 					if(GetDistanceBetweenCoords(coords, trainLocation.x, trainLocation.y, trainLocation.z, true) < Config.DrawDistance) then
 						DrawMarker(Config.MarkerType, trainLocation.x, trainLocation.y, trainLocation.z, 0.0, 0.0, 0.0, 0, 0.0, 0.0, Config.MarkerSize.x, Config.MarkerSize.y, Config.MarkerSize.z-2.0, Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, false, false, false, false)
@@ -44,16 +44,16 @@ function DoTrains()
 			end
 			
 			SetTrainCruiseSpeed(Config.TrainVeh,Config.Speed)
-		elseif IsPedInAnyTrain(GetPlayerPed(-1)) then -- Should fix not being able to drive trains after restart resource.
+		elseif IsPedInAnyTrain(PlayerPedId()) then -- Should fix not being able to drive trains after restart resource.
 			-- DebugLog("I'm in a train? Did the resource restart...")
-			if GetVehiclePedIsIn(GetPlayerPed(-1), false) == 0 then
+			if GetVehiclePedIsIn(PlayerPedId(), false) == 0 then
 				-- DebugLog("Unable to get train, re-enter the train, or wait!")
 
-				-- IsPedInAnyTrain(GetPlayerPed(-1)) can be true while GetVehiclePedIsIn(GetPlayerPed(-1), false) is false.
+				-- IsPedInAnyTrain(PlayerPedId()) can be true while GetVehiclePedIsIn(PlayerPedId(), false) is false.
 				-- This is a new thing with being inside a train, while not driving it. Disabling the Logs for this as it shouldn't be a issue.
 			else
-				DebugLog("T:" .. GetVehiclePedIsIn(GetPlayerPed(-1), false) .. "|M:" .. GetEntityModel(GetVehiclePedIsIn(GetPlayerPed(-1), false)))
-				Config.TrainVeh = GetVehiclePedIsIn(GetPlayerPed(-1), false)
+				DebugLog("T:" .. GetVehiclePedIsIn(PlayerPedId(), false) .. "|M:" .. GetEntityModel(GetVehiclePedIsIn(PlayerPedId(), false)))
+				Config.TrainVeh = GetVehiclePedIsIn(PlayerPedId(), false)
 				Config.inTrain = true
 			end
 		end
@@ -66,7 +66,7 @@ function DoTrains()
 				DebugLog("exit")
 				if (Config.TrainVeh ~= 0) then
 					local off = GetOffsetFromEntityInWorldCoords(Config.TrainVeh, -2.0, -5.0, 0.6)
-					SetEntityCoords(GetPlayerPed(-1), off.x, off.y, off.z,false,false,false,false)
+					SetEntityCoords(PlayerPedId(), off.x, off.y, off.z,false,false,false,false)
 				end
 				Config.inTrain = false
 				Config.inTrainAsPas = false
@@ -75,13 +75,13 @@ function DoTrains()
 				Config.TrainVeh = FindNearestTrain()
 				if (Config.TrainVeh ~= 0) then
 					if (GetPedInVehicleSeat(Config.TrainVeh, 1) == 0) then -- If train has driver, then enter the back
-						SetPedIntoVehicle(GetPlayerPed(-1),Config.TrainVeh,-1)
+						SetPedIntoVehicle(PlayerPedId(),Config.TrainVeh,-1)
 						Config.inTrain = true
 						DebugLog("Set into Train!")
 						DebugLog("T:" .. GetVehiclePedIsIn( ped, false ) .. "|M:" .. GetEntityModel(GetVehiclePedIsIn( ped, false )))
 					elseif GetCanPassenger(Config.TrainVeh) then
 						local off = GetOffsetFromEntityInWorldCoords(Config.TrainVeh, 0.0, -5.0, 0.6)
-						SetEntityCoords(GetPlayerPed(-1), off.x, off.y, off.z)
+						SetEntityCoords(PlayerPedId(), off.x, off.y, off.z)
 						Config.inTrainAsPas = true
 						DebugLog("Set into Train as Passenger!")
 						DebugLog("T:" .. GetVehiclePedIsIn( ped, false ) .. "|M:" .. GetEntityModel(GetVehiclePedIsIn( ped, false )))
